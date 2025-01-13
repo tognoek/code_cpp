@@ -348,43 +348,66 @@ int er[9];
 // solve
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<long long> a(n + 5);
-    vector<long long> b(n + 5);  
-    for (int i = 1; i <= n; i++){
-        cin >> a[i];
-    }
-    for (int i = 1; i <= n; i++){
-        cin >> b[i];
-    }
-    long long x, y, z;
-    x = 1000;
-    y = 10000000000;
-    for (int i = 1; i <= n; i++){
-        z = a[i] - b[i];
-        if (x < 0 && z < 0){
-            cout << "NO";
-            return;
+    int n, m;
+    string s;
+    cin >> n >> m;
+    cin >> s;
+    vector<pair<int, int>> b;
+    vector<vector<long long>> a(n + 5, vector<long long>(m + 5));
+    b.push_back(make_pair(1, 1));
+    vector<int> x(n + 5, 0);
+    vector<int> y(m + 5, 0);
+    int r, t;
+    r = 1;
+    t = 1;
+    x[1] = 1;
+    y[1] = 1;
+    for (int i = 0; i < s.length(); i++){
+        if (s[i] == 'D'){
+            r = r + 1;
+            b.push_back(make_pair(r, t));
+            x[r]++;
+            y[t]++;
+        }else{
+            t = t + 1;
+            b.push_back(make_pair(r, t));
+            x[r]++;
+            y[t]++;
         }
-        if (z < 0){
-            x = z;
+    }
+    vector<long long> row(n+5, 0);
+    vector<long long> colum(m+5, 0);
+    for (int i = 1; i <= n; i++){
+        for (int t = 1; t <= m; t++){
+            cin >> a[i][t];
+            row[i] = row[i] + a[i][t];
+            colum[t] = colum[t] + a[i][t];
         }
-        if (z >= 0){
-            // cout << z << " ";
-            y = min(z, y);
+    }
+    for (int i = 0; i < b.size(); i++){
+        int u = b[i].first;
+        int v = b[i].second;
+        if (x[u] == 1){
+            x[u]++;
+            y[v]--;
+            a[u][v] = 0 - row[u];
+            row[u] += a[u][v];
+            colum[v] += a[u][v];
+        }else{
+            y[v]++;
+            x[u]--;
+            a[u][v] = 0 - colum[v];
+            row[u] += a[u][v];
+            colum[v] += a[u][v];
         }
     }
-    // cout << x << " " << y << " ";
-    if (x > 0){
-        cout << "YES";
-        return;
+    for (int i = 1; i <= n; i++){
+        for (int t = 1; t <= m; t++){
+            cout << a[i][t] << " ";
+        }
+        if (n != i)
+            cout << endl;
     }
-    if (abs(x) > y){
-        cout << "NO";
-        return;
-    }
-    cout << "YES";
 }
 
 
